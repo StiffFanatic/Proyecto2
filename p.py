@@ -2,11 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import DatosAcciones as da  # Importa la función desde el módulo DatosAcciones
 
-def show_stock_data():
-    symbol = symbol_entry.get().upper()
-    api_key = api_key_entry.get()
-
-    time_series = da.get_stock_data(api_key, symbol)
+def show_stock_data(api_key, symbol, url):
+    time_series = da.get_stock_data(api_key, symbol, url)
 
     if time_series:
         # Crear una nueva ventana para mostrar la información
@@ -26,6 +23,12 @@ def show_stock_data():
             result_text.insert(tk.END, f"Precio de cierre: {valores['4. close']}\n")
             result_text.insert(tk.END, f"Volumen: {valores['5. volume']}\n\n")
 
+def get_input_and_show():
+    api_key = api_key_entry.get()
+    symbol = symbol_entry.get().upper()
+    url = url_entry.get()
+
+    show_stock_data(api_key, symbol, url)
 
 root = tk.Tk()
 root.title("Consulta de datos de acciones")
@@ -42,8 +45,14 @@ symbol_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
 symbol_entry = tk.Entry(root)
 symbol_entry.grid(row=1, column=1, padx=10, pady=5)
 
+# Etiqueta y entrada para la URL de la API
+url_label = tk.Label(root, text="URL API:")
+url_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+url_entry = tk.Entry(root)
+url_entry.grid(row=2, column=1, padx=10, pady=5)
+
 # Botón para mostrar los datos de las acciones
-show_button = tk.Button(root, text="Mostrar datos", command=show_stock_data)
-show_button.grid(row=2, columnspan=2, padx=10, pady=10)
+show_button = tk.Button(root, text="Mostrar datos", command=get_input_and_show)
+show_button.grid(row=3, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
