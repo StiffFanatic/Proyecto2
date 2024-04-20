@@ -1,8 +1,11 @@
+# main.py
 import datosclima as dc
 
-lat=33.4
-lon =94.04
-API_key="eef03cb879082e18453fc1c4d4dbafe2"
+def main():
+    simbolo = 'GOOG'
+    lon = '1.0'  # Puedes modificar estos valores según sea necesario
+    time = '2024-04-19'  # Puedes modificar estos valores según sea necesario
+    dc.obtener_datos(simbolo, lon, time)
 
-dc.obtener_datos(lat,lon, API_key)
-
+if __name__ == "__main__":
+    main()
