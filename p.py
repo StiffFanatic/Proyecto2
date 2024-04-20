@@ -1,36 +1,24 @@
 import tkinter as tk
 from tkinter import messagebox
-import requests
-
-def get_stock_data(api_key, symbol):
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={api_key}"
-    response = requests.get(url)
-    
-    if response.status_code == 200:
-        datos = response.json()
-        time_series = datos["Time Series (Daily)"]
-        return time_series
-    else:
-        messagebox.showerror("Error", "Error al obtener datos")
-        return None
+import DatosAcciones as da  # Importa la función desde el módulo DatosAcciones
 
 def show_stock_data():
     symbol = symbol_entry.get().upper()
     api_key = api_key_entry.get()
-    
-    time_series = get_stock_data(api_key, symbol)
-    
+
+    time_series = da.get_stock_data(api_key, symbol)
+
     if time_series:
         # Crear una nueva ventana para mostrar la información
         result_window = tk.Toplevel(root)
         result_window.title("Datos de acciones")
-        
+
         # Crear un Text widget para mostrar la información
         result_text = tk.Text(result_window, wrap="word", height=20, width=80)
         result_text.pack(padx=10, pady=10)
-        
+
         # Mostrar la información en el Text widget
-        for fecha, valores in time_series.items():
+        for fecha, valores in sorted(time_series.items(), reverse=True):  # Ordenar por fecha
             result_text.insert(tk.END, f"Fecha: {fecha}\n")
             result_text.insert(tk.END, f"Precio apertura: {valores['1. open']}\n")
             result_text.insert(tk.END, f"Precio máximo: {valores['2. high']}\n")
@@ -38,7 +26,7 @@ def show_stock_data():
             result_text.insert(tk.END, f"Precio de cierre: {valores['4. close']}\n")
             result_text.insert(tk.END, f"Volumen: {valores['5. volume']}\n\n")
 
-# Crear la ventana principal
+
 root = tk.Tk()
 root.title("Consulta de datos de acciones")
 
