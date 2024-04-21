@@ -1,6 +1,6 @@
 import tkinter as tk
 import Acciones_GUI as ac
-import Covid19 as C19
+import Covid19_GUI as C19
 
 root = tk.Tk()
 root.title("Consulta de datos")

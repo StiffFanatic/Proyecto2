@@ -1,11 +1,18 @@
 import requests
+import json
+import pandas as pd
 
-def get_covid_data(api_url, state_code):
+def get_covid_data(state_code):
     try:
-        # Realizar la solicitud GET a la API
-        response = requests.get(f"{api_url}/v1/states/{state_code}/current.json")
-        response.raise_for_status()  # Lanzar una excepción si hay un error en la solicitud
-        data = response.json()  # Convertir la respuesta a JSON
-        return data
-    except requests.exceptions.RequestException as e:
-        raise Exception(f"Error al obtener datos de COVID: {e}")
+        # POST to API
+        payload = {'code': state_code}
+        URL = 'https://api.statworx.com/covid'
+        response = requests.post(url=URL, data=json.dumps(payload))
+
+        # Convert to data frame
+        df = pd.DataFrame.from_dict(json.loads(response.text))
+        df = df.iloc[:, :12]
+
+        return df
+    except Exception as e:
+        raise Exception(f"Error al obtener datos de COVID: {str(e)}")
