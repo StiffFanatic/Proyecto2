@@ -9,9 +9,12 @@ def get_covid_data(state_code):
         URL = 'https://api.statworx.com/covid'
         response = requests.post(url=URL, data=json.dumps(payload))
 
-        # Convert to data frame
+        # Convertir la respuesta a DataFrame
         df = pd.DataFrame.from_dict(json.loads(response.text))
         df = df.iloc[:, :12]
+
+        # Verificar si la columna 'Casos acumulados' está presente
+        
 
         return df
     except Exception as e:
