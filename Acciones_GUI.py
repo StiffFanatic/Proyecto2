@@ -3,16 +3,16 @@ from tkinter import messagebox
 from tkcalendar import Calendar
 
 def show_data_window(data):
-    # Función para mostrar la ventana de datos con la información obtenida
+
     result_window = tk.Toplevel()
     result_window.title("Datos de acciones")
 
-    # Crear un Text widget para mostrar la información
+   
     result_text = tk.Text(result_window, wrap="word", height=20, width=80)
     result_text.pack(padx=10, pady=10)
 
-    # Mostrar la información en el Text widget
-    for fecha, valores in sorted(data.items(), reverse=True):  # Ordenar por fecha
+  
+    for fecha, valores in sorted(data.items(), reverse=True):  
         result_text.insert(tk.END, f"Fecha: {fecha}\n")
         result_text.insert(tk.END, f"Precio apertura: {valores['1. open']}\n")
         result_text.insert(tk.END, f"Precio máximo: {valores['2. high']}\n")
@@ -21,9 +21,7 @@ def show_data_window(data):
         result_text.insert(tk.END, f"Volumen: {valores['5. volume']}\n\n")
 
 def show_stock_data(api_key, symbol, url, selected_date):
-    # Esta función debería ser implementada para obtener los datos de acciones
-    # de la API y mostrarlos en la interfaz gráfica.
-    # Por ahora, solo mostraremos un cuadro de mensaje con los datos simulados.
+ 
     data = {
         selected_date: {
             '1. open': '100.00',
@@ -36,7 +34,7 @@ def show_stock_data(api_key, symbol, url, selected_date):
     show_data_window(data)
 
 def get_input_and_show(root):
-    # Función para obtener los datos de entrada y mostrar la ventana de datos
+   
     input_window = tk.Toplevel(root)
     input_window.title("Ingrese los parámetros")
 
@@ -58,7 +56,7 @@ def get_input_and_show(root):
     date_label = tk.Label(input_window, text="Seleccione la fecha:")
     date_label.grid(row=3, column=0, padx=10, pady=5)
     cal = Calendar(input_window, selectmode='day',
-                   year=2024, month=4, day=21)  # Calendario para seleccionar la fecha
+                   year=2024, month=4, day=21)  
     cal.grid(row=3, column=1, padx=10, pady=5)
 
     confirm_button = tk.Button(input_window, text="Mostrar datos", command=lambda: process_input(api_key_entry.get(), symbol_entry.get(), url_entry.get(), cal.get_date(), input_window))
@@ -69,5 +67,5 @@ def process_input(api_key, symbol, url, selected_date, input_window):
         messagebox.showwarning("Advertencia", "Por favor, complete todos los campos para continuar.")
     else:
         show_stock_data(api_key, symbol, url, selected_date)
-        # Una vez que se procesan los datos, cerramos la ventana de diálogo
+    
         input_window.destroy()
