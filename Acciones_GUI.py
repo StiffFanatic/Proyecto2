@@ -1,18 +1,20 @@
 import tkinter as tk
 from tkinter import messagebox
-from tkcalendar import Calendar
+from tkcalendar import DateEntry
+from datetime import timedelta
+import matplotlib.pyplot as plt
 
 def show_data_window(data):
-
+    # Función para mostrar la ventana de datos con la información obtenida
     result_window = tk.Toplevel()
     result_window.title("Datos de acciones")
 
-   
+    # Crear un Text widget para mostrar la información
     result_text = tk.Text(result_window, wrap="word", height=20, width=80)
     result_text.pack(padx=10, pady=10)
 
-  
-    for fecha, valores in sorted(data.items(), reverse=True):  
+    # Mostrar la información en el Text widget
+    for fecha, valores in sorted(data.items(), reverse=True):  # Ordenar por fecha
         result_text.insert(tk.END, f"Fecha: {fecha}\n")
         result_text.insert(tk.END, f"Precio apertura: {valores['1. open']}\n")
         result_text.insert(tk.END, f"Precio máximo: {valores['2. high']}\n")
@@ -20,21 +22,46 @@ def show_data_window(data):
         result_text.insert(tk.END, f"Precio de cierre: {valores['4. close']}\n")
         result_text.insert(tk.END, f"Volumen: {valores['5. volume']}\n\n")
 
-def show_stock_data(api_key, symbol, url, selected_date):
- 
-    data = {
-        selected_date: {
+    # Mostrar gráficos de los datos
+    fig, axs = plt.subplots(2)
+    axs[0].plot(list(data.keys()), [float(valores['4. close']) for valores in data.values()], label='Precio de cierre')
+    axs[0].set_title('Precio de cierre')
+    axs[0].set_xlabel('Fecha')
+    axs[0].set_ylabel('Precio')
+    axs[0].legend()
+    axs[1].plot(list(data.keys()), [float(valores['5. volume']) for valores in data.values()], label='Volumen')
+    axs[1].set_title('Volumen')
+    axs[1].set_xlabel('Fecha')
+    axs[1].set_ylabel('Volumen')
+    axs[1].legend()
+    plt.tight_layout()
+    plt.show()
+
+def show_stock_data(api_key, symbol, url, start_date, end_date):
+    # Esta función debería ser implementada para obtener los datos de acciones
+    # de la API y mostrarlos en la interfaz gráfica.
+    # Por ahora, solo mostraremos un cuadro de mensaje con los datos simulados.
+
+    # Obtener todas las fechas dentro del rango
+    delta = end_date - start_date
+    dates_range = [start_date + timedelta(days=i) for i in range(delta.days + 1)]
+
+    data = {}
+    # Obtener los datos para cada fecha dentro del rango
+    for date in dates_range:
+        formatted_date = date.strftime('%Y-%m-%d')
+        data[formatted_date] = {
             '1. open': '100.00',
             '2. high': '105.00',
             '3. low': '98.00',
             '4. close': '102.50',
             '5. volume': '1000000'
         }
-    }
+
     show_data_window(data)
 
 def get_input_and_show(root):
-   
+    # Función para obtener los datos de entrada y mostrar la ventana de datos
     input_window = tk.Toplevel(root)
     input_window.title("Ingrese los parámetros")
 
@@ -53,19 +80,23 @@ def get_input_and_show(root):
     url_entry = tk.Entry(input_window)
     url_entry.grid(row=2, column=1, padx=10, pady=5)
 
-    date_label = tk.Label(input_window, text="Seleccione la fecha:")
-    date_label.grid(row=3, column=0, padx=10, pady=5)
-    cal = Calendar(input_window, selectmode='day',
-                   year=2024, month=4, day=21)  
-    cal.grid(row=3, column=1, padx=10, pady=5)
+    start_date_label = tk.Label(input_window, text="Seleccione la fecha de inicio:")
+    start_date_label.grid(row=3, column=0, padx=10, pady=5)
+    start_cal = DateEntry(input_window, width=12, background='darkblue', foreground='white', borderwidth=2)  # Calendario para seleccionar la fecha de inicio
+    start_cal.grid(row=3, column=1, padx=10, pady=5)
 
-    confirm_button = tk.Button(input_window, text="Mostrar datos", command=lambda: process_input(api_key_entry.get(), symbol_entry.get(), url_entry.get(), cal.get_date(), input_window))
-    confirm_button.grid(row=4, columnspan=2, padx=10, pady=10)
+    end_date_label = tk.Label(input_window, text="Seleccione la fecha de fin:")
+    end_date_label.grid(row=4, column=0, padx=10, pady=5)
+    end_cal = DateEntry(input_window, width=12, background='darkblue', foreground='white', borderwidth=2)  # Calendario para seleccionar la fecha de fin
+    end_cal.grid(row=4, column=1, padx=10, pady=5)
 
-def process_input(api_key, symbol, url, selected_date, input_window):
+    confirm_button = tk.Button(input_window, text="Mostrar datos", command=lambda: process_input(api_key_entry.get(), symbol_entry.get(), url_entry.get(), start_cal.get_date(), end_cal.get_date(), input_window))
+    confirm_button.grid(row=5, columnspan=2, padx=10, pady=10)
+
+def process_input(api_key, symbol, url, start_date, end_date, input_window):
     if not api_key or not symbol or not url:
         messagebox.showwarning("Advertencia", "Por favor, complete todos los campos para continuar.")
     else:
-        show_stock_data(api_key, symbol, url, selected_date)
-    
+        show_stock_data(api_key, symbol, url, start_date, end_date)
+        # Una vez que se procesan los datos, cerramos la ventana de diálogo
         input_window.destroy()
