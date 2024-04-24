@@ -4,39 +4,6 @@ from tkcalendar import DateEntry
 from datetime import timedelta
 import matplotlib.pyplot as plt
 
-def show_data_window(data):
-    # Función para mostrar la ventana de datos con la información obtenida
-    result_window = tk.Toplevel()
-    result_window.title("Datos de acciones")
-
-    # Crear un Text widget para mostrar la información
-    result_text = tk.Text(result_window, wrap="word", height=20, width=80)
-    result_text.pack(padx=10, pady=10)
-
-    # Mostrar la información en el Text widget
-    for fecha, valores in sorted(data.items(), reverse=True):  # Ordenar por fecha
-        result_text.insert(tk.END, f"Fecha: {fecha}\n")
-        result_text.insert(tk.END, f"Precio apertura: {valores['1. open']}\n")
-        result_text.insert(tk.END, f"Precio máximo: {valores['2. high']}\n")
-        result_text.insert(tk.END, f"Precio mínimo: {valores['3. low']}\n")
-        result_text.insert(tk.END, f"Precio de cierre: {valores['4. close']}\n")
-        result_text.insert(tk.END, f"Volumen: {valores['5. volume']}\n\n")
-
-    # Mostrar gráficos de los datos
-    fig, axs = plt.subplots(2)
-    axs[0].plot(list(data.keys()), [float(valores['4. close']) for valores in data.values()], label='Precio de cierre')
-    axs[0].set_title('Precio de cierre')
-    axs[0].set_xlabel('Fecha')
-    axs[0].set_ylabel('Precio')
-    axs[0].legend()
-    axs[1].plot(list(data.keys()), [float(valores['5. volume']) for valores in data.values()], label='Volumen')
-    axs[1].set_title('Volumen')
-    axs[1].set_xlabel('Fecha')
-    axs[1].set_ylabel('Volumen')
-    axs[1].legend()
-    plt.tight_layout()
-    plt.show()
-
 def show_stock_data(api_key, symbol, url, start_date, end_date):
     # Esta función debería ser implementada para obtener los datos de acciones
     # de la API y mostrarlos en la interfaz gráfica.
@@ -46,19 +13,27 @@ def show_stock_data(api_key, symbol, url, start_date, end_date):
     delta = end_date - start_date
     dates_range = [start_date + timedelta(days=i) for i in range(delta.days + 1)]
 
-    data = {}
-    # Obtener los datos para cada fecha dentro del rango
-    for date in dates_range:
-        formatted_date = date.strftime('%Y-%m-%d')
-        data[formatted_date] = {
-            '1. open': '100.00',
-            '2. high': '105.00',
-            '3. low': '98.00',
-            '4. close': '102.50',
-            '5. volume': '1000000'
+    # Datos simulados para el precio de apertura, máximo y mínimo
+    data = {
+        date.strftime('%Y-%m-%d'): {
+            '1. open': float(100 + 5 * (i % 10)),  # Simulando precios de apertura variados
+            '2. high': float(105 + 5 * (i % 10)),  # Simulando precios máximos variados
+            '3. low': float(98 + 5 * (i % 10)),  # Simulando precios mínimos variados
         }
+        for i, date in enumerate(dates_range)
+    }
 
-    show_data_window(data)
+    # Mostrar la gráfica del precio máximo y mínimo
+    plt.figure(figsize=(10, 5))
+    plt.plot(list(data.keys()), [valores['2. high'] for valores in data.values()], label='Precio máximo', marker='o', linestyle='-')
+    plt.plot(list(data.keys()), [valores['3. low'] for valores in data.values()], label='Precio mínimo', marker='o', linestyle='-')
+    plt.title('Precios Máximo y Mínimo')
+    plt.xlabel('Fecha')
+    plt.ylabel('Precio')
+    plt.xticks(rotation=45)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 def get_input_and_show(root):
     # Función para obtener los datos de entrada y mostrar la ventana de datos
@@ -100,3 +75,24 @@ def process_input(api_key, symbol, url, start_date, end_date, input_window):
         show_stock_data(api_key, symbol, url, start_date, end_date)
         # Una vez que se procesan los datos, cerramos la ventana de diálogo
         input_window.destroy()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Consulta de datos")
+
+    welcome_label = tk.Label(root, text="Bienvenido\nSeleccione el tipo de dato a consultar:")
+    welcome_label.grid(row=0, columnspan=2, padx=10, pady=5)
+
+    acciones_button = tk.Button(root, text="Acciones", command=get_input_and_show)
+    acciones_button.grid(row=1, column=0, padx=10, pady=5)
+
+    redes_sociales_button = tk.Button(root, text="Redes Sociales", state=tk.DISABLED)
+    redes_sociales_button.grid(row=1, column=1, padx=10, pady=5)
+
+    clima_button = tk.Button(root, text="Clima", state=tk.DISABLED)
+    clima_button.grid(row=2, column=0, padx=10, pady=5)
+
+    epidemiologia_button = tk.Button(root, text="Epidemiología", state=tk.DISABLED)
+    epidemiologia_button.grid(row=2, column=1, padx=10, pady=5)
+
+    root.mainloop()
