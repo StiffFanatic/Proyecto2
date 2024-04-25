@@ -8,6 +8,7 @@ import DatosCovid19 as dacovid  # Asumiendo que este módulo tiene la función g
 fondo = '#FFFFE0'  # Color de fondo
 highlight_color = '#98FB98'  # Color botón
 highlight_color2 = '#87CEFA'#Color botón 2
+highlight_color3 = '#EC4F4F' #Color botón 3
 
 def open_data_options_window(country_data):
     data_options_window = tk.Toplevel()
@@ -20,6 +21,52 @@ def open_data_options_window(country_data):
     plot_button = tk.Button(data_options_window, text="Mostrar Gráfica", command=lambda: plot_covid_data(country_data),bg=highlight_color2)
     plot_button.pack(padx=10, pady=5)
     
+    Analisis_button = tk.Button(data_options_window, text="Analisis Basico", command=lambda:show_analisis(country_data,data_options_window),bg=highlight_color3)
+    Analisis_button.pack(padx=10, pady=5)
+    
+def show_analisis(country_data, parent_window):
+    analysis_window = tk.Toplevel(parent_window)
+    analysis_window.title("Análisis Básico de Datos")
+    analysis_window.configure(bg=fondo)
+    
+    # Crear widgets para ingresar parámetros de análisis
+    analysis_label = tk.Label(analysis_window, text="Seleccione el tipo de análisis:")
+    analysis_label.pack(padx=10, pady=5)
+
+    analysis_options = ttk.Combobox(analysis_window, values=["Promedio", "Máximo", "Mínimo"])
+    analysis_options.pack(padx=10, pady=5)
+
+    column_label = tk.Label(analysis_window, text="Seleccione la columna de interés:")
+    column_label.pack(padx=10, pady=5)
+
+    columns = country_data[0].columns.tolist()
+    column_options = ttk.Combobox(analysis_window, values=columns)
+    column_options.pack(padx=10, pady=5)
+
+    # Función para realizar el análisis
+    def perform_analysis():
+        analysis_type = analysis_options.get()
+        selected_column = column_options.get()
+
+        # Obtener datos del país seleccionado
+        country_df = country_data[0]  # Por ahora solo tomamos el primer país
+        column_data = country_df[selected_column]
+
+        # Realizar el análisis seleccionado
+        if analysis_type == "Promedio":
+            result = column_data.mean()
+        elif analysis_type == "Máximo":
+            result = column_data.max()
+        elif analysis_type == "Mínimo":
+            result = column_data.min()
+
+        # Mostrar resultado del análisis
+        messagebox.showinfo("Resultado", f"El {analysis_type.lower()} de la columna '{selected_column}' es: {result}")
+
+    # Botón para realizar el análisis
+    analyze_button = tk.Button(analysis_window, text="Realizar Análisis", command=perform_analysis)
+    analyze_button.pack(padx=10, pady=5)
+     
 def show_covid_table(country_data, parent_window):
     table_window = tk.Toplevel(parent_window)
     table_window.title("Datos COVID-19 - Tabla")

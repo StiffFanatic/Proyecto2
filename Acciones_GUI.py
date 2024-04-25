@@ -40,7 +40,7 @@ def get_input_and_show(root):
     # Función para obtener los datos de entrada y mostrar la ventana de datos
     input_window = tk.Toplevel(root)
     input_window.title("Ingrese los parámetros")
-    input_window.configure(bg='#FFFFFF')  # Fondo blanco para la ventana
+    input_window.configure(bg='#FFFFE0')  # Fondo blanco para la ventana
 
     api_key_label = tk.Label(input_window, text="Clave API:", fg='#FFFFFF', bg='#4CAF50')  # Blanco y verde
     api_key_label.grid(row=0, column=0, padx=10, pady=5)

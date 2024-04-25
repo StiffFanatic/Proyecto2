@@ -1,7 +1,7 @@
 # Proyecto 2 Fundamentos Informática Electrónica
 
 ## Autores
-- Luis Enrique
+- Luis Enrique Sandoval
 - Andrés David Nazarith
 
 ## Módulo Acciones
@@ -64,4 +64,5 @@ Para ejecutar el programa:
     - Matplotlib
     - Pandas
     - Tkinter
+    - Tkcalendar
     
